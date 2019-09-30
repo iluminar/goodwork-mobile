@@ -1,2 +1,2 @@
-# goodwork-mobile
-Android and iOS app for Goodwork application
+# Goodwork
+Android and iOS app for Goodwork web application.
