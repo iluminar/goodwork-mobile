@@ -5,6 +5,7 @@ class User extends Equatable {
   User(
       {this.name,
       @required this.username,
+      this.avatar,
       this.bio,
       this.designation,
       @required this.email,
@@ -14,6 +15,7 @@ class User extends Equatable {
 
   String name;
   String username;
+  String avatar;
   String bio = '';
   String designation = '';
   String email;

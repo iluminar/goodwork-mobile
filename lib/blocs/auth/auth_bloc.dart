@@ -34,6 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final User user = User(
           name: responseBody['user']['name'],
           username: responseBody['user']['username'],
+          avatar: '$baseUrl${responseBody['user']['avatar']}',
           bio: responseBody['user']['bio'],
           designation: responseBody['user']['designation'],
           email: responseBody['user']['email'],

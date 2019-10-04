@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goodwork/blocs/auth/auth_bloc.dart';
 import 'package:goodwork/blocs/auth/auth_state.dart';
 import 'package:goodwork/models/user.dart';
 import 'package:goodwork/screens/home_screen.dart';
 import 'package:goodwork/screens/login_screen.dart';
+import 'package:goodwork/widgets/side_menu.dart';
 
-void main() => runApp(GoodworkApp());
+void main() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.teal,
+  ));
+  runApp(GoodworkApp());
+}
 
 class GoodworkApp extends StatelessWidget {
   final AuthBloc authBloc = AuthBloc();
@@ -18,28 +25,40 @@ class GoodworkApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Scaffold(
-        extendBody: true,
-        backgroundColor: Colors.grey[200],
-        body: BlocProvider.value(
-          value: authBloc,
-          child: BlocBuilder(
-            bloc: authBloc,
-            builder: (BuildContext context, AuthState state) {
-              if (state is InitialAuthState) {
-                return loadLoginScreen();
-              } else if (state is UserLoading) {
-                return showLoadingScreen();
-              } else if (state is UserLoaded) {
-                return showHomeScreen(state.authUser);
-              } else if (state is UserNotFound) {
-                return loadLoginScreen();
-              }
-            },
-          ),
+      home: BlocProvider.value(
+        value: authBloc,
+        child: BlocBuilder(
+          bloc: authBloc,
+          builder: (BuildContext context, AuthState state) {
+            if (state is UserLoaded) {
+              return Scaffold(
+                extendBody: true,
+                backgroundColor: Colors.grey[200],
+                drawer: showDrawerMenu(state.authUser),
+                body: loadScreen(state),
+              );
+            }
+            return Scaffold(
+              extendBody: true,
+              backgroundColor: Colors.grey[200],
+              body: loadScreen(state),
+            );
+          },
         ),
       ),
     );
+  }
+
+  Widget loadScreen(AuthState state) {
+    if (state is InitialAuthState) {
+      return loadLoginScreen();
+    } else if (state is UserLoading) {
+      return showLoadingScreen();
+    } else if (state is UserLoaded) {
+      return showHomeScreen(state.authUser);
+    } else if (state is UserNotFound) {
+      return loadLoginScreen();
+    }
   }
 
   void dispose() {
@@ -66,5 +85,11 @@ Widget showLoadingScreen() {
     child: CircularProgressIndicator(
       valueColor: AlwaysStoppedAnimation<Color>(Colors.teal),
     ),
+  );
+}
+
+Widget showDrawerMenu(User authUser) {
+  return SideMenu(
+    authUser: authUser,
   );
 }

@@ -49,23 +49,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 40.0,
                 ),
                 Material(
-                  elevation: 5.0,
-                  shape: null,
-                  child: TextField(
-                    onChanged: (String string) {
-                      setState(() {
-                        email = string;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'E-mail',
-                      hintStyle: const TextStyle(
-                        fontSize: 20,
+                  borderRadius: BorderRadius.circular(5.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(5.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      boxShadow: const <BoxShadow>[
+                        BoxShadow(
+                          color: Color.fromRGBO(60, 66, 87, .12),
+                          blurRadius: 14.0,
+                          offset: Offset(0.0, 7.0),
+                        ),
+                        BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, .12),
+                          blurRadius: 6.0,
+                          offset: Offset(0.0, 3.0),
+                        ),
+                      ],
+                      color: Colors.white,
+                    ),
+                    child: TextField(
+                      onChanged: (String string) {
+                        setState(() {
+                          email = string;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'E-mail',
+                        hintStyle: const TextStyle(
+                          fontSize: 20,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: InputBorder.none,
                       ),
-                      fillColor: Colors.white,
-                      filled: true,
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.all(15),
                     ),
                   ),
                 ),
@@ -73,23 +90,41 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 40.0,
                 ),
                 Material(
-                  elevation: 5.0,
-                  child: TextField(
-                    onChanged: (String string) {
-                      setState(() {
-                        password = string;
-                      });
-                    },
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: 'Password',
-                      hintStyle: const TextStyle(
-                        fontSize: 20,
+                  borderRadius: BorderRadius.circular(5.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(5.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      boxShadow: const <BoxShadow>[
+                        BoxShadow(
+                          color: Color.fromRGBO(60, 66, 87, .12),
+                          blurRadius: 14.0,
+                          offset: Offset(0.0, 7.0),
+                        ),
+                        BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, .12),
+                          blurRadius: 6.0,
+                          offset: Offset(0.0, 3.0),
+                        ),
+                      ],
+                      color: Colors.white,
+                    ),
+                    child: TextField(
+                      onChanged: (String string) {
+                        setState(() {
+                          password = string;
+                        });
+                      },
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Password',
+                        hintStyle: const TextStyle(
+                          fontSize: 20,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: InputBorder.none,
                       ),
-                      fillColor: Colors.white,
-                      filled: true,
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.all(15),
                     ),
                   ),
                 ),
