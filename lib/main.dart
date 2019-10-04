@@ -11,7 +11,6 @@ import 'package:goodwork/screens/connection_request_screen.dart';
 import 'package:goodwork/screens/home_screen.dart';
 import 'package:goodwork/screens/login_screen.dart';
 import 'package:goodwork/widgets/side_menu.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
