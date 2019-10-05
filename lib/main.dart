@@ -10,7 +10,9 @@ import 'package:goodwork/models/user.dart';
 import 'package:goodwork/screens/connection_request_screen.dart';
 import 'package:goodwork/screens/home_screen.dart';
 import 'package:goodwork/screens/login_screen.dart';
+import 'package:goodwork/screens/set_app_url_screen.dart';
 import 'package:goodwork/widgets/side_menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -25,7 +27,10 @@ class GoodworkApp extends StatefulWidget {
 }
 
 class _GoodworkAppState extends State<GoodworkApp> {
-  bool _isConnected = false;
+  bool _connected = false;
+  bool _webAppUrlSet = false;
+  String webAppUrl;
+  SharedPreferences prefs;
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
   final AuthBloc authBloc = AuthBloc();
@@ -34,8 +39,17 @@ class _GoodworkAppState extends State<GoodworkApp> {
   void initState() {
     super.initState();
     initConnectivity();
+    initPreference();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  Future<void> initPreference() async {
+    prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('base_url')) {
+      webAppUrl = prefs.getString('base_url');
+      _webAppUrlSet = true;
+    }
   }
 
   Future<void> initConnectivity() async {
@@ -58,7 +72,7 @@ class _GoodworkAppState extends State<GoodworkApp> {
     if (result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi) {
       setState(() {
-        _isConnected = true;
+        _connected = true;
       });
     }
   }
@@ -67,8 +81,9 @@ class _GoodworkAppState extends State<GoodworkApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Goodwork',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
       ),
       home: BlocProvider.value(
         value: authBloc,
@@ -96,9 +111,7 @@ class _GoodworkAppState extends State<GoodworkApp> {
 
   Widget loadScreen(AuthState state) {
     if (state is InitialAuthState) {
-      return _isConnected == true
-          ? loadLoginScreen()
-          : ConnectionRequestScreen();
+      return _connected == true ? loadLoginScreen() : ConnectionRequestScreen();
     } else if (state is UserLoading) {
       return showLoadingScreen();
     } else if (state is UserLoaded) {
@@ -108,35 +121,37 @@ class _GoodworkAppState extends State<GoodworkApp> {
     }
   }
 
+  Widget loadLoginScreen() {
+    return _webAppUrlSet == true
+        ? LoginScreen()
+        : SetAppUrlScreen(prefs: prefs);
+  }
+
+  Widget showHomeScreen(User authUser) {
+    return Center(
+      child: HomeScreen(
+        authUser: authUser,
+      ),
+    );
+  }
+
+  Widget showLoadingScreen() {
+    return Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.teal),
+      ),
+    );
+  }
+
+  Widget showDrawerMenu(User authUser) {
+    return SideMenu(
+      authUser: authUser,
+    );
+  }
+
+  @override
   void dispose() {
+    super.dispose();
     authBloc.dispose();
   }
-}
-
-Widget loadLoginScreen() {
-  return Center(
-    child: LoginScreen(),
-  );
-}
-
-Widget showHomeScreen(User authUser) {
-  return Center(
-    child: HomeScreen(
-      authUser: authUser,
-    ),
-  );
-}
-
-Widget showLoadingScreen() {
-  return Center(
-    child: CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(Colors.teal),
-    ),
-  );
-}
-
-Widget showDrawerMenu(User authUser) {
-  return SideMenu(
-    authUser: authUser,
-  );
 }

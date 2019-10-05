@@ -6,11 +6,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:goodwork/errors/user_not_found_exception.dart';
 import 'package:goodwork/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final String baseUrl = 'http://192.168.0.104/';
+  String baseUrl;
   final http.Client client = http.Client();
   final FlutterSecureStorage storage = const FlutterSecureStorage();
   Map<String, dynamic> responseBody;
@@ -26,6 +27,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         yield UserLoading();
 
+        await getBaseUrl();
+
         final Future<http.Response> response =
             sendTokenRequest(event.email, event.password);
 
@@ -34,7 +37,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final User user = User(
           name: responseBody['user']['name'],
           username: responseBody['user']['username'],
-          avatar: '$baseUrl${responseBody['user']['avatar']}',
+          avatar: responseBody['user']['avatar'] == null
+              ? 'assets/images/avatar.png'
+              : '$baseUrl/${responseBody['user']['avatar']}',
           bio: responseBody['user']['bio'],
           designation: responseBody['user']['designation'],
           email: responseBody['user']['email'],
@@ -52,15 +57,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  Future<void> getBaseUrl() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('base_url')) {
+      baseUrl = prefs.getString('base_url');
+    }
+  }
+
   Future<http.Response> sendTokenRequest(String email, String password) async {
     http.StreamedResponse response;
-    response = await client
-        .send(http.Request('POST', Uri.parse('${baseUrl}oauth/token'))
-          ..headers['content-type'] = 'application/json'
-          ..body = jsonEncode({
-            'username': email,
-            'password': password,
-          }));
+    final String url = '$baseUrl/oauth/token';
+    response = await client.send(http.Request('POST', Uri.parse(url))
+      ..headers['content-type'] = 'application/json'
+      ..body = jsonEncode({
+        'username': email,
+        'password': password,
+      }));
 
     return await http.Response.fromStream(response);
   }

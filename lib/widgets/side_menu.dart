@@ -23,7 +23,10 @@ class _SideMenuState extends State<SideMenu> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: NetworkImage(widget.authUser.avatar),
+                    backgroundImage:
+                        widget.authUser.avatar.contains('http') == false
+                            ? const AssetImage('assets/images/avatar.png')
+                            : NetworkImage(widget.authUser.avatar),
                     radius: 30.0,
                   ),
                   const SizedBox(height: 10.0),
@@ -38,7 +41,9 @@ class _SideMenuState extends State<SideMenu> {
                   image: DecorationImage(
                       colorFilter: ColorFilter.mode(
                           Colors.white.withOpacity(0.5), BlendMode.dstATop),
-                      image: NetworkImage(widget.authUser.avatar),
+                      image: widget.authUser.avatar.contains('http') == false
+                          ? const AssetImage('assets/images/avatar.png')
+                          : NetworkImage(widget.authUser.avatar),
                       fit: BoxFit.cover)),
             ),
             ListTileTheme(
