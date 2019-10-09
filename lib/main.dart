@@ -6,7 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goodwork/blocs/auth/auth_bloc.dart';
 import 'package:goodwork/blocs/auth/auth_state.dart';
+import 'package:goodwork/blocs/home/home_bloc.dart';
+import 'package:goodwork/blocs/home/home_state.dart';
 import 'package:goodwork/models/user.dart';
+import 'package:goodwork/repositories/task_repository.dart';
 import 'package:goodwork/screens/connection_request_screen.dart';
 import 'package:goodwork/screens/home_screen.dart';
 import 'package:goodwork/screens/login_screen.dart';
@@ -93,6 +96,10 @@ class _GoodworkAppState extends State<GoodworkApp> {
             if (state is UserLoaded) {
               return Scaffold(
                 extendBody: true,
+                appBar: AppBar(
+                  elevation: 0,
+                  title: const Text('Goodwork'),
+                ),
                 backgroundColor: Colors.grey[200],
                 drawer: showDrawerMenu(state.authUser),
                 body: loadScreen(state),
@@ -112,6 +119,8 @@ class _GoodworkAppState extends State<GoodworkApp> {
   Widget loadScreen(AuthState state) {
     if (state is InitialAuthState) {
       return _connected == true ? loadLoginScreen() : ConnectionRequestScreen();
+    } else if (state is BaseUrlSet) {
+      return loadLoginScreen();
     } else if (state is UserLoading) {
       return showLoadingScreen();
     } else if (state is UserLoaded) {
@@ -124,14 +133,27 @@ class _GoodworkAppState extends State<GoodworkApp> {
   Widget loadLoginScreen() {
     return _webAppUrlSet == true
         ? LoginScreen()
-        : SetAppUrlScreen(prefs: prefs);
+        : SetAppUrlScreen(
+            prefs: prefs,
+          );
   }
 
   Widget showHomeScreen(User authUser) {
-    return Center(
-      child: HomeScreen(
-        authUser: authUser,
-      ),
+    return BlocBuilder(
+      bloc: HomeBloc(authBloc, TaskRepository()),
+      builder: (BuildContext context, HomeState state) {
+        if (state is CurrentWorkLoaded) {
+          return HomeScreen(
+            authUser: authUser,
+            currentWork: state.currentWork,
+          );
+        }
+        return Center(
+          child: HomeScreen(
+            authUser: authUser,
+          ),
+        );
+      },
     );
   }
 

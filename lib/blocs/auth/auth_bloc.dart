@@ -23,6 +23,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> mapEventToState(
     AuthEvent event,
   ) async* {
+    if (event is BaseUrlLoaded) {
+      yield BaseUrlSet(urlSet: true);
+    }
+
     if (event is Login) {
       try {
         yield UserLoading();
@@ -83,7 +87,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         throw UserNotFoundException();
       }
       responseBody = await json.decode(response.body);
-      await storage.write(key: 'token', value: responseBody['access_token']);
+      await storage.write(
+          key: 'access_token', value: responseBody['access_token']);
+      await storage.write(
+          key: 'refresh_token', value: responseBody['refresh_token']);
     });
   }
 }

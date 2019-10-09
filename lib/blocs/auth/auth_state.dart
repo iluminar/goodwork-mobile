@@ -10,6 +10,15 @@ class InitialAuthState extends AuthState {
   List<Object> get props => [];
 }
 
+class BaseUrlSet extends AuthState {
+  const BaseUrlSet({this.urlSet});
+
+  final bool urlSet;
+
+  @override
+  List<Object> get props => [urlSet];
+}
+
 class UserLoading extends AuthState {
   @override
   List<Object> get props => [];

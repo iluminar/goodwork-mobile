@@ -70,7 +70,7 @@ class _SetAppUrlScreenState extends State<SetAppUrlScreen> {
               onPressed: () {
                 widget.prefs.setString('base_url', url);
                 final AuthBloc authBloc = BlocProvider.of<AuthBloc>(context);
-                authBloc.dispatch(AppStarted());
+                authBloc.dispatch(BaseUrlLoaded());
               },
               color: Colors.teal,
               padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),

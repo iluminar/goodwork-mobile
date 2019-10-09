@@ -51,13 +51,13 @@ class _SideMenuState extends State<SideMenu> {
               textColor: Colors.white,
               child: ListTile(
                 leading: Icon(
-                  Icons.account_circle,
-                  size: 30.0,
+                  Icons.notifications,
+                  size: 20.0,
                 ),
                 title: const Text(
-                  'Profile',
+                  'Notifications',
                   style: TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 20.0,
                   ),
                 ),
                 onTap: () {
@@ -65,21 +65,18 @@ class _SideMenuState extends State<SideMenu> {
                 },
               ),
             ),
-            const SizedBox(
-              height: 10.0,
-            ),
             ListTileTheme(
               iconColor: Colors.white,
               textColor: Colors.white,
               child: ListTile(
                 leading: Icon(
-                  Icons.settings,
-                  size: 30.0,
+                  Icons.message,
+                  size: 20.0,
                 ),
                 title: const Text(
-                  'Settings',
+                  'Messages',
                   style: TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 20.0,
                   ),
                 ),
                 onTap: () {
@@ -88,7 +85,47 @@ class _SideMenuState extends State<SideMenu> {
               ),
             ),
             const Divider(
-              height: 10.0,
+              color: Color.fromRGBO(255, 255, 255, 0.8),
+            ),
+            ListTileTheme(
+              iconColor: Colors.white,
+              textColor: Colors.white,
+              child: ListTile(
+                leading: Icon(
+                  Icons.account_circle,
+                  size: 20.0,
+                ),
+                title: const Text(
+                  'Profile',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            ListTileTheme(
+              iconColor: Colors.white,
+              textColor: Colors.white,
+              child: ListTile(
+                leading: Icon(
+                  Icons.settings,
+                  size: 20.0,
+                ),
+                title: const Text(
+                  'Settings',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            const Divider(
               color: Color.fromRGBO(255, 255, 255, 0.8),
             ),
             ListTileTheme(
@@ -97,12 +134,12 @@ class _SideMenuState extends State<SideMenu> {
               child: ListTile(
                 leading: Icon(
                   Icons.exit_to_app,
-                  size: 30.0,
+                  size: 20.0,
                 ),
                 title: const Text(
                   'Logout',
                   style: TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 20.0,
                   ),
                 ),
                 onTap: () {

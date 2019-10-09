@@ -13,6 +13,11 @@ class AppStarted extends AuthEvent {
   List<Object> get props => [];
 }
 
+class BaseUrlLoaded extends AuthEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class Login extends AuthEvent {
   const Login({@required this.email, @required this.password});
 
