@@ -5,15 +5,18 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:goodwork/errors/user_not_found_exception.dart';
 import 'package:goodwork/models/user.dart';
+import 'package:goodwork/repositories/auth_repository.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import './bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  AuthBloc(this.authRepository);
+
   String baseUrl;
   final http.Client client = http.Client();
   final FlutterSecureStorage storage = const FlutterSecureStorage();
+  final AuthRepository authRepository;
   Map<String, dynamic> responseBody;
 
   @override
@@ -23,62 +26,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> mapEventToState(
     AuthEvent event,
   ) async* {
-    if (event is BaseUrlLoaded) {
-      yield BaseUrlSet(urlSet: true);
-    }
+    try {
+      if (event is BaseUrlLoaded) {
+        yield const BaseUrlSet(urlSet: true);
+      }
 
-    if (event is Login) {
-      try {
+      if (event is AccessTokenLoaded) {
         yield UserLoading();
 
-        await getBaseUrl();
+        final Map<String, dynamic> response = await authRepository.getAuthUser();
+        final User user = getUser(response);
+
+        yield UserLoaded(authUser: user);
+      }
+
+      if (event is Login) {
+        yield UserLoading();
 
         final Future<http.Response> response =
-            sendTokenRequest(event.email, event.password);
+            authRepository.sendTokenRequest(event.email, event.password);
 
         await saveTokenAndUser(response);
 
-        final User user = User(
-          name: responseBody['user']['name'],
-          username: responseBody['user']['username'],
-          avatar: responseBody['user']['avatar'] == null
-              ? 'assets/images/avatar.png'
-              : '$baseUrl/${responseBody['user']['avatar']}',
-          bio: responseBody['user']['bio'],
-          designation: responseBody['user']['designation'],
-          email: responseBody['user']['email'],
-          lang: responseBody['user']['lang'],
-          timezone: responseBody['user']['timezone'],
-          weekStart: responseBody['user']['week_start'],
-        );
+        final User user = getUser(responseBody['user']);
 
         yield UserLoaded(authUser: user);
-      } catch (e) {
-        yield UserNotFound();
-      } finally {
-        client.close();
       }
+    } catch (e) {
+      yield UserNotFound();
+    } finally {
+      client.close();
     }
-  }
-
-  Future<void> getBaseUrl() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('base_url')) {
-      baseUrl = prefs.getString('base_url');
-    }
-  }
-
-  Future<http.Response> sendTokenRequest(String email, String password) async {
-    http.StreamedResponse response;
-    final String url = '$baseUrl/oauth/token';
-    response = await client.send(http.Request('POST', Uri.parse(url))
-      ..headers['content-type'] = 'application/json'
-      ..body = jsonEncode({
-        'username': email,
-        'password': password,
-      }));
-
-    return await http.Response.fromStream(response);
   }
 
   Future<void> saveTokenAndUser(Future<http.Response> response) async {
@@ -92,5 +70,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await storage.write(
           key: 'refresh_token', value: responseBody['refresh_token']);
     });
+  }
+
+  User getUser(Map<String, dynamic> user) {
+    return User(
+      name: user['name'],
+      username: user['username'],
+      avatar: user['avatar'] == null
+          ? 'assets/images/avatar.png'
+          : '$baseUrl/${user['avatar']}',
+      bio: user['bio'],
+      designation: user['designation'],
+      email: user['email'],
+      lang: user['lang'],
+      timezone: user['timezone'],
+      weekStart: user['week_start'],
+    );
   }
 }

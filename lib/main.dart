@@ -4,11 +4,14 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:goodwork/blocs/auth/auth_bloc.dart';
+import 'package:goodwork/blocs/auth/auth_event.dart';
 import 'package:goodwork/blocs/auth/auth_state.dart';
 import 'package:goodwork/blocs/home/home_bloc.dart';
 import 'package:goodwork/blocs/home/home_state.dart';
 import 'package:goodwork/models/user.dart';
+import 'package:goodwork/repositories/auth_repository.dart';
 import 'package:goodwork/repositories/task_repository.dart';
 import 'package:goodwork/screens/connection_request_screen.dart';
 import 'package:goodwork/screens/home_screen.dart';
@@ -32,17 +35,20 @@ class GoodworkApp extends StatefulWidget {
 class _GoodworkAppState extends State<GoodworkApp> {
   bool _connected = false;
   bool _webAppUrlSet = false;
+  bool _loggedIn = false;
   String webAppUrl;
   SharedPreferences prefs;
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
-  final AuthBloc authBloc = AuthBloc();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final AuthBloc authBloc = AuthBloc(AuthRepository());
 
   @override
   void initState() {
     super.initState();
     initConnectivity();
     initPreference();
+    checkAuthStatus();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
@@ -53,6 +59,11 @@ class _GoodworkAppState extends State<GoodworkApp> {
       webAppUrl = prefs.getString('base_url');
       _webAppUrlSet = true;
     }
+  }
+
+  Future<void> checkAuthStatus() async {
+    final String _accessToken = await _storage.read(key: 'access_token');
+    _loggedIn = _accessToken != null;
   }
 
   Future<void> initConnectivity() async {
@@ -118,24 +129,34 @@ class _GoodworkAppState extends State<GoodworkApp> {
 
   Widget loadScreen(AuthState state) {
     if (state is InitialAuthState) {
-      return _connected == true ? loadLoginScreen() : ConnectionRequestScreen();
+      return _connected == true
+          ? loadSetAppUrlScreen()
+          : ConnectionRequestScreen();
     } else if (state is BaseUrlSet) {
-      return loadLoginScreen();
+      return loadSetAppUrlScreen();
     } else if (state is UserLoading) {
       return showLoadingScreen();
     } else if (state is UserLoaded) {
       return showHomeScreen(state.authUser);
     } else if (state is UserNotFound) {
-      return loadLoginScreen();
+      return loadSetAppUrlScreen();
     }
   }
 
-  Widget loadLoginScreen() {
+  Widget loadSetAppUrlScreen() {
     return _webAppUrlSet == true
-        ? LoginScreen()
+        ? loadLoginScreen()
         : SetAppUrlScreen(
             prefs: prefs,
           );
+  }
+
+  Widget loadLoginScreen() {
+    if (_loggedIn) {
+      authBloc.dispatch(AccessTokenLoaded());
+      return showLoadingScreen();
+    }
+    return LoginScreen();
   }
 
   Widget showHomeScreen(User authUser) {
