@@ -15,6 +15,8 @@ Goodwork is a self hosted project management and collaboration tool inspired by 
 |
 <b><a href="#demo">Demo</a></b>
 |
+<b><a href="#screenshots-top">Screenshots</a></b>
+|
 <b><a href="#contributing-top">Contributing</a></b>
 |
 <b><a href="#supporting-top">Supporting</a></b>
@@ -40,6 +42,12 @@ You can check out an instance of the web application that we use as a guest user
 `email: guest@example.com`
 
 `password: guestpass`
+
+## Screenshots <small>[↑Top](#about-goodwork)</small>
+
+![Dashboard](https://imgur.com/vQwCEiD)
+
+![Side Menu](https://imgur.com/2YoaBTF)
 
 ## Contributing <small>[↑Top](#about-goodwork)</small>
 

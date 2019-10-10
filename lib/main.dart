@@ -112,7 +112,7 @@ class _GoodworkAppState extends State<GoodworkApp> {
                   title: const Text('Goodwork'),
                 ),
                 backgroundColor: Colors.grey[200],
-                drawer: showDrawerMenu(state.authUser),
+                endDrawer: showDrawerMenu(state.authUser),
                 body: loadScreen(state),
               );
             }

@@ -34,8 +34,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (event is AccessTokenLoaded) {
         yield UserLoading();
 
-        final Map<String, dynamic> response = await authRepository.getAuthUser();
-        final User user = getUser(response);
+        final Map<String, dynamic> response =
+            await authRepository.getAuthUser();
+        final User user = await getUser(response);
 
         yield UserLoaded(authUser: user);
       }
@@ -48,7 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         await saveTokenAndUser(response);
 
-        final User user = getUser(responseBody['user']);
+        final User user = await getUser(responseBody['user']);
 
         yield UserLoaded(authUser: user);
       }
@@ -72,13 +73,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  User getUser(Map<String, dynamic> user) {
+  Future<User> getUser(Map<String, dynamic> user) async {
+    baseUrl = await authRepository.getBaseUrl();
     return User(
       name: user['name'],
       username: user['username'],
       avatar: user['avatar'] == null
           ? 'assets/images/avatar.png'
-          : '$baseUrl/${user['avatar']}',
+          : "$baseUrl/${user['avatar']}",
       bio: user['bio'],
       designation: user['designation'],
       email: user['email'],
