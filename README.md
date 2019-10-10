@@ -45,9 +45,9 @@ You can check out an instance of the web application that we use as a guest user
 
 ## Screenshots <small>[↑Top](#about-goodwork)</small>
 
-![Dashboard](https://imgur.com/vQwCEiD)
+<img src="https://i.imgur.com/vQwCEiD.png" width="320" alt="home dashboard">
 
-![Side Menu](https://imgur.com/2YoaBTF)
+<img src="https://i.imgur.com/2YoaBTF.png" width="320" alt="side drawer menu">
 
 ## Contributing <small>[↑Top](#about-goodwork)</small>
 
