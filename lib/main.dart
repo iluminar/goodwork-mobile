@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,29 +101,38 @@ class _GoodworkAppState extends State<GoodworkApp> {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: BlocProvider.value(
-        value: authBloc,
-        child: BlocBuilder(
-          bloc: authBloc,
-          builder: (BuildContext context, AuthState state) {
-            if (state is UserLoaded) {
+      home: SplashScreen.navigate(
+        name: 'assets/images/splash.flr',
+        until: () => Future<dynamic>.delayed(
+          Duration(seconds: 3),
+        ),
+        startAnimation: 'splash',
+        alignment: Alignment.center,
+        backgroundColor: Colors.white,
+        next: BlocProvider.value(
+          value: authBloc,
+          child: BlocBuilder(
+            bloc: authBloc,
+            builder: (BuildContext context, AuthState state) {
+              if (state is UserLoaded) {
+                return Scaffold(
+                  extendBody: true,
+                  appBar: AppBar(
+                    elevation: 0,
+                    title: const Text('Goodwork'),
+                  ),
+                  backgroundColor: Colors.grey[200],
+                  endDrawer: showDrawerMenu(state.authUser),
+                  body: loadScreen(state),
+                );
+              }
               return Scaffold(
                 extendBody: true,
-                appBar: AppBar(
-                  elevation: 0,
-                  title: const Text('Goodwork'),
-                ),
                 backgroundColor: Colors.grey[200],
-                endDrawer: showDrawerMenu(state.authUser),
                 body: loadScreen(state),
               );
-            }
-            return Scaffold(
-              extendBody: true,
-              backgroundColor: Colors.grey[200],
-              body: loadScreen(state),
-            );
-          },
+            },
+          ),
         ),
       ),
     );
