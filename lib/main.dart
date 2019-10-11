@@ -15,6 +15,7 @@ import 'package:goodwork/repositories/auth_repository.dart';
 import 'package:goodwork/repositories/task_repository.dart';
 import 'package:goodwork/screens/connection_request_screen.dart';
 import 'package:goodwork/screens/home_screen.dart';
+import 'package:goodwork/screens/loading_screen.dart';
 import 'package:goodwork/screens/login_screen.dart';
 import 'package:goodwork/screens/set_app_url_screen.dart';
 import 'package:goodwork/widgets/side_menu.dart';
@@ -180,9 +181,7 @@ class _GoodworkAppState extends State<GoodworkApp> {
 
   Widget showLoadingScreen() {
     return Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.teal),
-      ),
+      child: LoadingScreen(),
     );
   }
 
