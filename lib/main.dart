@@ -44,6 +44,7 @@ class _GoodworkAppState extends State<GoodworkApp> {
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final AuthBloc authBloc = AuthBloc(AuthRepository());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -93,6 +94,20 @@ class _GoodworkAppState extends State<GoodworkApp> {
     }
   }
 
+  void showErrorMessage(String message) {
+    final SnackBar snackBar = SnackBar(
+      content: Text(
+        '$message',
+        style: TextStyle(
+          fontSize: 20,
+        ),
+      ),
+      duration: Duration(seconds: 5),
+      backgroundColor: Colors.red,
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -101,16 +116,15 @@ class _GoodworkAppState extends State<GoodworkApp> {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: SplashScreen.navigate(
-        name: 'assets/images/splash.flr',
-        until: () => Future<dynamic>.delayed(
-          Duration(seconds: 3),
-        ),
-        startAnimation: 'splash',
-        alignment: Alignment.center,
-        backgroundColor: Colors.white,
-        next: BlocProvider.value(
-          value: authBloc,
+      home: BlocProvider.value(
+        value: authBloc,
+        child: BlocListener(
+          bloc: authBloc,
+          listener: (BuildContext context, AuthState state) {
+            if (state is UserNotFound) {
+              showErrorMessage('User not found');
+            }
+          },
           child: BlocBuilder(
             bloc: authBloc,
             builder: (BuildContext context, AuthState state) {
@@ -127,6 +141,7 @@ class _GoodworkAppState extends State<GoodworkApp> {
                 );
               }
               return Scaffold(
+                key: _scaffoldKey,
                 extendBody: true,
                 backgroundColor: Colors.grey[200],
                 body: loadScreen(state),
