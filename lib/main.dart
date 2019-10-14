@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
-import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,6 +122,8 @@ class _GoodworkAppState extends State<GoodworkApp> {
           listener: (BuildContext context, AuthState state) {
             if (state is UserNotFound) {
               showErrorMessage('User not found');
+            } else if (state is InitialAuthState) {
+              _loggedIn = false;
             }
           },
           child: BlocBuilder(

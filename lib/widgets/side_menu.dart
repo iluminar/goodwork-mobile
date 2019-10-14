@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:goodwork/blocs/auth/bloc.dart';
 import 'package:goodwork/models/user.dart';
 
 class SideMenu extends StatefulWidget {
@@ -148,6 +150,7 @@ class _SideMenuState extends State<SideMenu> {
                   ),
                 ),
                 onTap: () {
+                  BlocProvider.of<AuthBloc>(context).dispatch(Logout());
                   Navigator.pop(context);
                 },
               ),

@@ -29,8 +29,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       if (event is BaseUrlLoaded) {
         yield const BaseUrlSet(urlSet: true);
+        print('BaseUrlSet');
       }
-
       if (event is AccessTokenLoaded) {
         yield UserLoading();
 
@@ -52,6 +52,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final User user = await getUser(responseBody['user']);
 
         yield UserLoaded(authUser: user);
+      }
+
+      if ( event is Logout ) {
+        await removeAccessToken();
+
+        yield InitialAuthState();
       }
     } catch (e) {
       yield UserNotFound();
@@ -88,5 +94,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       timezone: user['timezone'],
       weekStart: user['week_start'],
     );
+  }
+
+  Future<void> removeAccessToken() async {
+    await storage.delete(key: 'access_token');
   }
 }
