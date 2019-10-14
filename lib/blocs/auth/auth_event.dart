@@ -34,8 +34,6 @@ class Login extends AuthEvent {
 }
 
 class Logout extends AuthEvent {
-
   @override
   List<Object> get props => [];
-
 }

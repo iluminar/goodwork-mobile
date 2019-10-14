@@ -122,6 +122,8 @@ class _GoodworkAppState extends State<GoodworkApp> {
           listener: (BuildContext context, AuthState state) {
             if (state is UserNotFound) {
               showErrorMessage('User not found');
+            } else if (state is InitialAuthState) {
+              _loggedIn = false;
             }
           },
           child: BlocBuilder(

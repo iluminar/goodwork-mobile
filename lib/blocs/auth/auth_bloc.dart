@@ -54,13 +54,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         yield UserLoaded(authUser: user);
       }
 
-      if( event is Logout ){
-
+      if ( event is Logout ) {
         await removeAccessToken();
 
         yield InitialAuthState();
       }
-    } catch (e,s) {
+    } catch (e) {
       yield UserNotFound();
     } finally {
       client.close();

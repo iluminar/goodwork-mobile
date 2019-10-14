@@ -151,7 +151,7 @@ class _SideMenuState extends State<SideMenu> {
                 ),
                 onTap: () {
                   BlocProvider.of<AuthBloc>(context).dispatch(Logout());
-//                  Navigator.pop(context);
+                  Navigator.pop(context);
                 },
               ),
             ),
