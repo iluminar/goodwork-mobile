@@ -67,12 +67,15 @@ class _SetAppUrlScreenState extends State<SetAppUrlScreen> {
               height: 40.0,
             ),
             RaisedButton(
-              onPressed: (_validUrl()) ? () {
-                _removeSlash();
-                widget.prefs.setString('base_url', url);
-                final AuthBloc authBloc = BlocProvider.of<AuthBloc>(context);
-                authBloc.dispatch(BaseUrlLoaded());
-              } : null,
+              onPressed: (_validUrl())
+                  ? () {
+                      _removeSlash();
+                      widget.prefs.setString('base_url', url);
+                      final AuthBloc authBloc =
+                          BlocProvider.of<AuthBloc>(context);
+                      authBloc.dispatch(BaseUrlLoaded());
+                    }
+                  : null,
               color: Colors.teal,
               padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
               shape: RoundedRectangleBorder(
@@ -92,14 +95,16 @@ class _SetAppUrlScreenState extends State<SetAppUrlScreen> {
   }
 
   bool _validUrl() {
-    RegExp reg = RegExp(r'[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)');
-    if(url != null && url.isNotEmpty)
+    final RegExp reg = RegExp(
+        r'[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)');
+    if (url != null && url.isNotEmpty) {
       return reg.hasMatch(url);
+    }
     return false;
   }
 
   void _removeSlash() {
-    if(url.endsWith('/')) {
+    if (url.endsWith('/')) {
       url = url.substring(0, url.length - 1);
     }
 
