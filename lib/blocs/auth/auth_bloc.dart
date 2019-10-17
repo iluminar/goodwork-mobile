@@ -29,7 +29,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       if (event is BaseUrlLoaded) {
         yield const BaseUrlSet(urlSet: true);
-        print('BaseUrlSet');
       }
       if (event is AccessTokenLoaded) {
         yield UserLoading();

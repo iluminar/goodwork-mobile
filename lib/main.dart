@@ -124,6 +124,8 @@ class _GoodworkAppState extends State<GoodworkApp> {
               showErrorMessage('User not found');
             } else if (state is InitialAuthState) {
               _loggedIn = false;
+            } else if (state is BaseUrlSet) {
+              _webAppUrlSet = true;
             }
           },
           child: BlocBuilder(
